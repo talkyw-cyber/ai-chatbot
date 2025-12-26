@@ -1,4 +1,11 @@
-﻿// 🤖 Bilingual AI Chatbot (English & Arabic)
+﻿
+// Function to get current time in HH:MM format
+function getCurrentTime() {
+    const now = new Date();
+    return now.getHours().toString().padStart(2, "0") + ":" + 
+           now.getMinutes().toString().padStart(2, "0");
+}
+// 🤖 Bilingual AI Chatbot (English & Arabic)
 console.log("Bilingual AI script loaded");
 
 // Language detection function
@@ -68,68 +75,37 @@ const aiResponses = {
     }
 };
 
-// Get AI response function
-function getAIResponse(input) {
-    const lang = detectLanguage(input);
-    const inputLower = input.toLowerCase();
-    
-    // Check for specific responses
-    for (const [key, data] of Object.entries(aiResponses)) {
-        const isLangMatch = key.includes('_en') ? lang === 'en' : 
-                           key.includes('_ar') ? lang === 'ar' : true;
-        
-        if (isLangMatch && data.keywords.some(keyword => inputLower.includes(keyword))) {
-            if (data.response) {
-                return typeof data.response === 'function' ? data.response() : data.response;
-            } else if (data.responses) {
-                const randomIndex = Math.floor(Math.random() * data.responses.length);
-                return data.responses[randomIndex];
-            }
-        }
-    }
-    
-    // Default responses based on language
-    const defaultResponses = {
-        en: "I'm still learning! Try: hello, time, date, joke, help (in English or Arabic)",
-        ar: "أنا لا أزال أتعلم! جرب: مرحبا, الوقت, التاريخ, نكتة, مساعدة (بالعربية أو الإنجليزية)"
-    };
-    
-    return defaultResponses[lang];
-}
-
-// Send message function
-function sendMessage() {
-    const inputField = document.getElementById('user-input');
-    const chatOutput = document.getElementById('chat-output');
-    
-    if (!inputField || !chatOutput) {
-        console.error('Could not find input or output elements');
-        return;
-    }
-    
-    const userMessage = inputField.value.trim();
-    if (userMessage === '') return;
-    
-    // Add user message with RTL support for Arabic
-    const isArabic = detectLanguage(userMessage) === 'ar';
-    const messageDir = isArabic ? 'dir="rtl"' : '';
-    
-    chatOutput.innerHTML += 
-        `<div class="chat-message user-message" ${messageDir}>
-            <strong>You:</strong> ${userMessage}
-        </div>`;
-    
-    // Get AI response
+// Get AI response
     const aiResponse = getAIResponse(userMessage);
-    const aiIsArabic = detectLanguage(aiResponse) === 'ar';
-    const aiDir = aiIsArabic ? 'dir="rtl"' : '';
+    const aiIsArabic = detectLanguage(aiResponse) === "ar";
+    const aiDir = aiIsArabic ? 'dir="rtl"' : "";
+    
+    // Show typing indicator
+    const typingId = "typing-" + Date.now();
+    chatOutput.innerHTML += 
+        \`<div class="chat-message ai-message ai-typing" \${aiDir} id="\${typingId}">
+            <strong>AI:</strong> Thinking 
+            <span class="typing-indicator">
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+                <span class="typing-dot"></span>
+            </span>
+        </div>\`;
+    chatOutput.scrollTop = chatOutput.scrollHeight;
     
     // Add AI response with delay
     setTimeout(function() {
+        // Remove typing indicator
+        const typingElement = document.getElementById(typingId);
+        if (typingElement) {
+            typingElement.remove();
+        }
+        
+        // Add AI response
         chatOutput.innerHTML += 
-            `<div class="chat-message ai-message" ${aiDir}>
-                <strong>AI:</strong> ${aiResponse}
-            </div>`;
+            \`<div class="chat-message ai-message" \${aiDir}>
+                <strong>AI:</strong> \${aiResponse}
+            </div>\`;
         chatOutput.scrollTop = chatOutput.scrollHeight;
     }, 500);
     
@@ -168,3 +144,6 @@ document.addEventListener('DOMContentLoaded', function() {
             </div>`;
     }
 });
+
+
+
