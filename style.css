@@ -5,12 +5,12 @@
     background: linear-gradient(135deg, #0c2461, #1e3799, #4a69bd);
     color: white;
     min-height: 100vh;
-    text-align: center;
 }
 
 h1 {
     color: #00d4ff;
     text-shadow: 0 0 15px rgba(0, 212, 255, 0.5);
+    text-align: center;
     margin-bottom: 20px;
     font-size: 2em;
 }
