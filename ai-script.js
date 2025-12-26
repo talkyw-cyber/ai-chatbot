@@ -1,21 +1,26 @@
-﻿// My AI Assistant - JavaScript Logic
+// AI Assistant - Simple Version
+console.log("AI script loaded");
+
+// AI responses database
 const aiResponses = {
-    'hello': ['Hello there! 👋', 'Hi! How can I help?', 'Greetings!'],
-    'time': [\Current time is: \\],
-    'date': [\Today is: \\],
-    'joke': [
-        'Why do programmers prefer dark mode? Because light attracts bugs!',
-        'What do you call a programmer from Finland? Nerdic.',
-        'Why did the programmer quit his job? Because he didn\'t get arrays!'
+    "hello": ["Hello there!", "Hi! How can I help?", "Greetings!"],
+    "time": ["The current time is: " + new Date().toLocaleTimeString()],
+    "date": ["Today is: " + new Date().toDateString()],
+    "joke": [
+        "Why do programmers prefer dark mode? Because light attracts bugs!",
+        "What do you call a programmer from Finland? Nerdic.",
+        "Why did the programmer quit his job? He didn't get arrays!"
     ],
-    'help': ['I can respond to: hello, time, date, joke, help']
+    "help": ["I can respond to: hello, time, date, joke, help"]
 };
 
+// Get AI response
 function getAIResponse(input) {
     input = input.toLowerCase().trim();
     
-    for (const [keyword, responses] of Object.entries(aiResponses)) {
+    for (const keyword in aiResponses) {
         if (input.includes(keyword)) {
+            const responses = aiResponses[keyword];
             const randomIndex = Math.floor(Math.random() * responses.length);
             return responses[randomIndex];
         }
@@ -24,50 +29,76 @@ function getAIResponse(input) {
     return "I'm still learning! Try: hello, time, date, joke, help";
 }
 
+// Send message function
 function sendMessage() {
-    const input = document.getElementById('user-input');
-    const chatOutput = document.getElementById('chat-output');
+    const inputField = document.getElementById("user-input");
+    const chatOutput = document.getElementById("chat-output");
     
-    if (input.value.trim() === '') return;
+    if (!inputField || !chatOutput) {
+        console.error("Could not find input or output elements");
+        return;
+    }
+    
+    const userMessage = inputField.value.trim();
+    if (userMessage === "") return;
     
     // Add user message
-    chatOutput.innerHTML += \
-        <div class="chat-message user-message">
-            <strong>You:</strong> \
-        </div>
-    \;
+    chatOutput.innerHTML += 
+        '<div class="chat-message user-message">' +
+        '<strong>You:</strong> ' + userMessage +
+        '</div>';
     
     // Get AI response
-    const aiResponse = getAIResponse(input.value);
+    const aiResponse = getAIResponse(userMessage);
     
     // Add AI response with delay
-    setTimeout(() => {
-        chatOutput.innerHTML += \
-            <div class="chat-message ai-message">
-                <strong>AI:</strong> \
-            </div>
-        \;
+    setTimeout(function() {
+        chatOutput.innerHTML += 
+            '<div class="chat-message ai-message">' +
+            '<strong>AI:</strong> ' + aiResponse +
+            '</div>';
         chatOutput.scrollTop = chatOutput.scrollHeight;
     }, 500);
     
     // Clear input
-    input.value = '';
-    input.focus();
+    inputField.value = "";
+    inputField.focus();
 }
 
-// Allow Enter key to send message
-document.getElementById('user-input').addEventListener('keypress', function(e) {
-    if (e.key === 'Enter') {
-        sendMessage();
+// Initialize when page loads
+document.addEventListener("DOMContentLoaded", function() {
+    console.log("DOM loaded, initializing AI");
+    
+    // Get elements
+    const inputField = document.getElementById("user-input");
+    const sendButton = document.getElementById("send-button");
+    const chatOutput = document.getElementById("chat-output");
+    
+    // Check if elements exist
+    if (!inputField) console.error("Input field not found");
+    if (!sendButton) console.error("Send button not found");
+    if (!chatOutput) console.error("Chat output not found");
+    
+    // Add event listeners
+    if (inputField) {
+        inputField.addEventListener("keypress", function(e) {
+            if (e.key === "Enter") {
+                sendMessage();
+            }
+        });
+        console.log("Enter key listener added");
     }
-});
-
-// Initialize with welcome message
-document.addEventListener('DOMContentLoaded', function() {
-    const chatOutput = document.getElementById('chat-output');
-    chatOutput.innerHTML = \
-        <div class="chat-message ai-message">
-            <strong>AI:</strong> Hello! I'm your AI assistant. Ask me anything!
-        </div>
-    \;
+    
+    if (sendButton) {
+        sendButton.addEventListener("click", sendMessage);
+        console.log("Button click listener added");
+    }
+    
+    // Show welcome message
+    if (chatOutput) {
+        chatOutput.innerHTML = 
+            '<div class="chat-message ai-message">' +
+            '<strong>AI:</strong> Hello! I am your AI assistant. Ask me anything!' +
+            '</div>';
+    }
 });
